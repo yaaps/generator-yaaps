@@ -1,7 +1,7 @@
 {
-  "name": "generator-cewp",
+  "name": "generator-yaaps",
   "version": "0.0.1",
-  "description": "A generator for scaffolding a content editor web part for SharePoint",
+  "description": "A Yeoman generator for scaffolding SharePoint client projects using content editor web parts and various other bits and pieces.",
   "files": [
     "app"
   ],
@@ -11,16 +11,18 @@
   "keywords": [
     "yeoman-generator",
     "sharepoint",
+    "yaaps",
+    "content-query-webpart",
     "content-editor-webpart"
   ],
   "author": "Paul Lucas",
   "license": "MIT",
   "dependencies": {
-    "yeoman-generator": "^0.24.1"
-  },
-  "devDependencies": {
+    "yeoman-generator": "^0.24.1",
     "chalk": "^1.1.3",
     "lodash": "^4.16.2",
     "yosay": "^1.2.1"
+  },
+  "devDependencies": {
   }
 }
