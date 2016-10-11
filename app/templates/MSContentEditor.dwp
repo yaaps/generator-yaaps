@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WebPart xmlns="http://schemas.microsoft.com/WebPart/v2">
+	<Assembly>Microsoft.SharePoint, Version=16.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c</Assembly>
+	<TypeName>Microsoft.SharePoint.WebPartPages.ContentEditorWebPart</TypeName>
+	<Title><%= title %></Title>
+	<Description><%= description %></Description>
+	<PartImageLarge>/_layouts/15/images/mscontl.gif</PartImageLarge>
+	<ContentLink xmlns="http://schemas.microsoft.com/WebPart/v2/ContentEditor"><%= baseurl %>/style library/<%= folder %>/index.html</ContentLink>
+</WebPart>

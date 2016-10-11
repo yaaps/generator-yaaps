@@ -1,0 +1,123 @@
+var generators = require('yeoman-generator');
+var yosay = require('yosay');
+var chalk = require('chalk');
+var _ = require('lodash');
+
+module.exports = generators.Base.extend({
+
+    settings: {},
+
+    defaultSiteUrl: "https://[tenant].sharepoint.com",
+
+    constructor: function () {
+        generators.Base.apply(this, arguments);
+    },
+
+    prompting: function () {
+
+        this.log(yosay(
+            "Welcome to the " + chalk.green("YAAPS") + " generator!"
+        ));
+
+        return this.prompt([{
+                type: 'input',
+                name: 'projectname',
+                message: 'Name of project:',
+                default: this.appname
+            },
+            {
+                type: 'input',
+                name: 'projectdescription',
+                message: 'Description of project:',
+                default: 'Description of ' + this.appname
+            },
+            {
+                type: 'input',
+                name: 'author',
+                message: 'Author'
+            },
+            {
+                type: 'input',
+                name: 'vendor',
+                message: 'Vendor',
+                default: "YAAPS"
+            },
+            {
+                type: 'input',
+                name: 'siteurl',
+                message: 'Deploy to site url:',
+                default: this.defaultSiteUrl
+            },
+            {
+                type: 'input',
+                name: 'user',
+                message: 'Deploy as user:',
+                default: "[username]"
+            },
+            {
+                type: 'confirm',
+                name: 'runinstall',
+                message: 'Run npm install?',
+                default: true
+            },
+            
+            ])
+            .then(function(answers){
+
+                var folder = _.startCase(answers.partname);
+                folder = _.replace(folder, /[^a-zA-Z0-9]/g, '');
+
+                var packageName = _.kebabCase(folder);
+                var baseUrl = "_BASEURL_";
+
+                this.settings = {
+                    title: answers.projectname,
+                    description: answers.projectdescription,
+                    site: answers.siteurl,
+                    author: answers.author,
+                    vendor: answers.vendor,
+                    user: answers.user,
+                    runinstall: answers.runinstall,
+                    pass: "[password]",
+                    folder: folder,
+                    package: packageName,
+                    baseurl: baseUrl
+                }
+                
+            }.bind(this));
+    },
+
+    writing: function () {
+        this.log("writing");
+
+        //this._copyTpl('index.html', 'src/Style Library/' + this.settings.folder + '/index.html');
+        //this._copyTpl('MSContentEditor.dwp', 'src/_catalogs/wp/' + this.settings.folder + '.dwp');
+
+        this._copyTpl('package.json');
+        this._copyTpl('gulpfile.js');
+        this._copyTpl('creds.js');
+        this._copyTpl('settings.js');
+        this._copyTpl('.gitignore');
+    },
+
+    install: function () {
+        if(this.settings.runinstall){
+        this.log("Beginning npm install");
+        this.npmInstall();  
+        }else{
+            this.log("Skipping npm install");
+        }
+    },
+
+    _copyTpl: function(tmpl, dest){
+
+        dest = dest || tmpl;
+        this.log(tmpl + ", " + dest);
+
+        this.fs.copyTpl(
+            this.templatePath(tmpl),
+            this.destinationPath(dest),
+            this.settings
+        );
+    },
+});
