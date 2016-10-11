@@ -97,7 +97,7 @@ module.exports = generators.Base.extend({
         this._copyTpl('gulpfile.js');
         this._copyTpl('creds.js');
         this._copyTpl('settings.js');
-        this._copyTpl('.gitignore');
+        this._copyTpl('gitignore', '.gitignore');
     },
 
     install: function () {
