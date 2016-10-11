@@ -1,2 +1,2 @@
-# generator-cewp
-A Yeoman generator for scaffolding a SharePoint Content Editor Web Part (CEWP)
+# generator-yaaps
+A Yeoman generator for scaffolding SharePoint client projects using content editor web parts and various other bits and pieces.
