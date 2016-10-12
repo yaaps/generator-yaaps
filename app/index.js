@@ -57,7 +57,7 @@ module.exports = generators.Base.extend({
             {
                 type: 'confirm',
                 name: 'createpart',
-                message: 'Create a web part now?:',
+                message: 'Create a basic content editor web part now?:',
                 default: true
             },
             {
@@ -84,15 +84,18 @@ module.exports = generators.Base.extend({
                 message: 'Run npm install?',
                 default: true
             },
-            
             ])
             .then(function(answers){
 
-                var folder = _.startCase(answers.partname);
-                folder = _.replace(folder, /[^a-zA-Z0-9]/g, '');
+                function strip(s){
+                    return _.replace(s, /[^a-zA-Z0-9]/g, '');
+                }
 
-                var packageName = _.kebabCase(folder);
+                var packageName = _.kebabCase(strip(_.startCase(answers.projectname)));
+                var partfolder = strip(_.startCase(answers.partname));
                 var baseUrl = "_BASEURL_";
+
+                this.log(packageName);
 
                 this.settings = {
                     title: answers.projectname,
@@ -101,9 +104,12 @@ module.exports = generators.Base.extend({
                     author: answers.author,
                     vendor: answers.vendor,
                     user: answers.user,
+                    createpart: answers.createpart,
+                    partname: answers.partname,
+                    partdescription: answers.partdescription,
                     runinstall: answers.runinstall,
                     pass: "[password]",
-                    folder: folder,
+                    folder: partfolder,
                     package: packageName,
                     baseurl: baseUrl
                 }
@@ -119,22 +125,29 @@ module.exports = generators.Base.extend({
         this._copyTpl('settings.js');
         this._copyTpl('gitignore', '.gitignore');
 
+        if(this.settings.createpart){
+            this._createCEWP(this.settings);
+        }
     },
 
     install: function () {
         
         if(this.settings.runinstall){
-        this.log(chalk.green("Beginning npm install"));
-        this.npmInstall();  
+            this.log(chalk.green("Beginning npm install"));
+            this.npmInstall();  
         }else{
             this.log(chalk.yellow("Skipping npm install"));
         }
     },
 
+    _createCEWP: function(settings){
+        this._copyTpl('index.html', 'src/Style Library/' + settings.folder + '/index.html');
+        this._copyTpl('MSContentEditor.dwp', 'src/_catalogs/wp/' + settings.folder + '.dwp');
+    },
+
     _copyTpl: function(tmpl, dest){
 
         dest = dest || tmpl;
-        //this.log(tmpl + ", " + dest);
 
         this.fs.copyTpl(
             this.templatePath(tmpl),

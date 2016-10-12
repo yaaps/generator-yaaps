@@ -42,7 +42,6 @@ module.exports = generators.Base.extend({
                     title: answers.partname,
                     description: answers.partdescription,
                     folder: folder,
-                    package: packageName,
                     baseurl: baseUrl
                 }
                 
@@ -50,21 +49,21 @@ module.exports = generators.Base.extend({
     },
 
     writing: function () {
-        this.log("writing");
-
-        this._copyTpl('index.html', 'src/Style Library/' + this.settings.folder + '/index.html');
-        this._copyTpl('MSContentEditor.dwp', 'src/_catalogs/wp/' + this.settings.folder + '.dwp');
-
+        this._createCEWP(this.settings);
     },
 
     install: function () {
         
     },
 
+    _createCEWP: function(settings){
+        this._copyTpl('index.html', 'src/Style Library/' + settings.folder + '/index.html');
+        this._copyTpl('MSContentEditor.dwp', 'src/_catalogs/wp/' + settings.folder + '.dwp');
+    },
+
     _copyTpl: function(tmpl, dest){
 
         dest = dest || tmpl;
-        this.log(tmpl + ", " + dest);
 
         this.fs.copyTpl(
             this.templatePath(tmpl),

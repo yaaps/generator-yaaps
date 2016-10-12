@@ -13,6 +13,7 @@ var merge = require("merge-stream");
 var plumber = require("gulp-plumber");
 var pathUtil = require("path");
 var Cpass = require("cpass");
+var chalk = require("chalk");
 
 var _ = require("lodash");
 
@@ -39,6 +40,12 @@ function setSiteUrl(url){
     catalogSettings = _.extend(catalogSettings, newSite);
 
 }
+
+function replaceTokens(file, settings){
+    file.contents = new Buffer(String(file.contents)
+        .replace(/_BASEURL_/g, settings.basePath));
+}
+
 
 gulp.task("check-site", function(){
     
@@ -80,7 +87,7 @@ gulp.task("check-password", function(){
     }
 
     if(!settings.password || settings.password == "[password]"){
-
+        gutil.log(chalk.yellow("HINT: Use gulp save-password to save your password in creds.js"));
         return inquirer.prompt([{
                 type: "password",
                 name: "pass",
@@ -88,7 +95,7 @@ gulp.task("check-password", function(){
             }])
             .then(function(result){
                     setPassword(result.pass);
-                });
+            });
      }else{
         setPassword(decrypt(settings.password));
      }
@@ -124,18 +131,17 @@ gulp.task("clean", function(){
 });
 
 gulp.task("build", ["check-site"], function(){
-    
-    function replaceTokens(file){
-        file.contents = new Buffer(String(file.contents)
-            .replace(/_BASEURL_/g, settings.basePath));
+
+    function replace(file){
+        return replaceTokens(file, settings);
     }
 
     var webparts = gulp.src("./src/_catalogs/wp/**/*.*")
-        .pipe(tap(replaceTokens))
+        .pipe(tap(replace))
         .pipe(gulp.dest("./dist/_catalogs/wp"));
 
     var templates = gulp.src("./src/Style Library/**/*.*")
-        .pipe(tap(replaceTokens))
+        .pipe(tap(replace))
         .pipe(gulp.dest("./dist/Style Library"));
 
     return merge(webparts, templates);
@@ -182,9 +188,8 @@ gulp.task("watch", ["check-all"], function(){
 
     gulp.watch(["./src/Style Library/**/*.*"], function(event){
 
-        function replaceTokens(file){
-            file.contents = new Buffer(String(file.contents)
-                .replace(/_BASEURL_/g, settings.basePath));
+        function replace(file){
+            return replaceTokens(file, settings);
         }
 
         function buildDest(filepath){
@@ -201,7 +206,7 @@ gulp.task("watch", ["check-all"], function(){
             .pipe(plumber({
                 errorHandler: onError
             }))
-            .pipe(tap(replaceTokens))
+            .pipe(tap(replace))
             .pipe(gulp.dest(function(){
                 return buildDest(event.path);
             }));
