@@ -59,7 +59,7 @@ gulp.task("check-site", function(){
 
 gulp.task("check-user", function(){
     
-    if(settings.username == "[username]"){
+    if(!settings.username || settings.username == "[username]"){
     
         return inquirer.prompt([{
                 type: "text",
@@ -74,7 +74,12 @@ gulp.task("check-user", function(){
 
 gulp.task("check-password", function(){
     
-    if(settings.password == "[password]"){
+    function decrypt(pass){
+        var cp = new Cpass();
+        return cp.decode(pass);
+    }
+
+    if(!settings.password || settings.password == "[password]"){
 
         return inquirer.prompt([{
                 type: "password",
@@ -84,6 +89,8 @@ gulp.task("check-password", function(){
             .then(function(result){
                     setPassword(result.pass);
                 });
+     }else{
+        setPassword(decrypt(settings.password));
      }
 });
 
