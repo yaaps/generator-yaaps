@@ -68,8 +68,6 @@ gulp.task("check-user", function(){
             .then(function(result){
                     setUsername(result.user);
                 });
-     }else{
-        //setUsername(settings.user);
      }
 });
 
@@ -86,6 +84,26 @@ gulp.task("check-password", function(){
                     setPassword(result.pass);
                 });
      }
+});
+
+gulp.task("save-password", function(){
+
+    function replacePassword(file, password){
+        file.contents = new Buffer(String(file.contents)
+            .replace(/pass:\s*['"]\S+['"]/g, 'pass: \"' + password + '\"'));
+    }
+
+    return inquirer.prompt([{
+                type: "password",
+                name: "pass",
+                message: "Password:"
+            }])
+            .then(function(result){
+
+                return gulp.src("./creds.js")
+                    .pipe(tap(function(file){return replacePassword(file, result.pass)}))
+                    .pipe(gulp.dest("."));
+            });
 });
 
 gulp.task("clean", function(){
