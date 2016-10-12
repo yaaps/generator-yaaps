@@ -45,7 +45,7 @@ module.exports = generators.Base.extend({
             {
                 type: 'input',
                 name: 'siteurl',
-                message: 'Deploy to site url:',
+                message: 'Deploy to SharePoint Online site url:',
                 default: this.defaultSiteUrl
             },
             {
@@ -53,6 +53,30 @@ module.exports = generators.Base.extend({
                 name: 'user',
                 message: 'Deploy as user:',
                 default: "[username]"
+            },
+            {
+                type: 'confirm',
+                name: 'createpart',
+                message: 'Create a web part now?:',
+                default: true
+            },
+            {
+                when: function(answers){
+                    return answers.createpart;
+                },
+                type: 'input',
+                name: 'partname',
+                message: 'Web part name:',
+                required: true
+            },
+            {
+                when: function(answers){
+                    return answers.createpart;
+                },
+                type: 'input',
+                name: 'partdescription',
+                message: 'Web part description:',
+                required: false
             },
             {
                 type: 'confirm',
@@ -88,31 +112,29 @@ module.exports = generators.Base.extend({
     },
 
     writing: function () {
-        this.log("writing");
-
-        //this._copyTpl('index.html', 'src/Style Library/' + this.settings.folder + '/index.html');
-        //this._copyTpl('MSContentEditor.dwp', 'src/_catalogs/wp/' + this.settings.folder + '.dwp');
 
         this._copyTpl('package.json');
         this._copyTpl('gulpfile.js');
         this._copyTpl('creds.js');
         this._copyTpl('settings.js');
         this._copyTpl('gitignore', '.gitignore');
+
     },
 
     install: function () {
+        
         if(this.settings.runinstall){
-        this.log("Beginning npm install");
+        this.log(chalk.green("Beginning npm install"));
         this.npmInstall();  
         }else{
-            this.log("Skipping npm install");
+            this.log(chalk.yellow("Skipping npm install"));
         }
     },
 
     _copyTpl: function(tmpl, dest){
 
         dest = dest || tmpl;
-        this.log(tmpl + ", " + dest);
+        //this.log(tmpl + ", " + dest);
 
         this.fs.copyTpl(
             this.templatePath(tmpl),
