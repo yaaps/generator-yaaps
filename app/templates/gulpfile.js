@@ -12,6 +12,7 @@ var runSequence = require("run-sequence");
 var merge = require("merge-stream");
 var plumber = require("gulp-plumber");
 var pathUtil = require("path");
+var Cpass = require("cpass");
 
 var _ = require("lodash");
 
@@ -88,9 +89,14 @@ gulp.task("check-password", function(){
 
 gulp.task("save-password", function(){
 
+    function encrypt(password){
+        var cp = new Cpass();
+        return cp.encode(password);
+    }
+
     function replacePassword(file, password){
         file.contents = new Buffer(String(file.contents)
-            .replace(/pass:\s*['"]\S+['"]/g, 'pass: \"' + password + '\"'));
+            .replace(/pass:\s*['"]\S+['"]/g, 'pass: \"' + encrypt(password) + '\"'));
     }
 
     return inquirer.prompt([{
