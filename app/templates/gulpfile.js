@@ -14,6 +14,8 @@ var plumber = require("gulp-plumber");
 var pathUtil = require("path");
 var Cpass = require("cpass");
 var chalk = require("chalk");
+var spauth = require('node-sp-auth');
+var request = require('request-promise');
 
 var _ = require("lodash");
 
@@ -210,5 +212,90 @@ gulp.task("watch", ["check-all"], function(){
             .pipe(gulp.dest(function(){
                 return buildDest(event.path);
             }));
+    });
+});
+
+
+gulp.task("spaxion", ["check-all"], function(){
+
+      var url = styleSettings.siteUrl;
+        var creds = {
+            username: styleSettings.username,
+            password: styleSettings.password 
+        };
+
+    return spauth.getAuth(url, creds)
+    .then((options) => {
+
+        var data = {
+            __metadata: {
+                type: "SP.UserCustomAction"
+            },
+            Description: "YAAPS User Custom Action",
+            Location: "ScriptLink",
+            Name: "YAAPS.ACTION",
+            ScriptSrc: "~siteCollection/Style Library/yaaps_boot.js",
+            Sequence: 1000,
+            Title: "YAAPS Action"
+        }
+
+        var headers = options.headers;
+        headers['Accept'] = 'application/json;odata=verbose';
+        headers['Content-Type'] = 'application/json;odata=verbose';
+
+        return request.post({
+          url: url + '/_api/contextinfo',
+          headers: headers
+        })
+        .then((response) => {
+                var digest = JSON.parse(response).d.GetContextWebInformation.FormDigestValue;
+
+                headers["X-RequestDigest"] = digest;
+
+                return request.get({
+                    url: url + '/_api/web/UserCustomActions',
+                    headers: headers,
+                   //body: data,
+                    //json: true
+                });
+        })
+        .then((response) => {
+            console.log("Received list of existing actions");
+            //console.log(response);
+
+            //     return request.get({
+            //         url: url + '/_api/web/UserCustomActions',
+            //         headers: headers,
+            //        //body: data,
+            //         //json: true
+            //     });
+
+            return Promise.resolve(response);
+        })
+        .then((response) => {
+                console.log("No action taken on existing actions");
+
+                var data = { __metadata: { type: 'SP.UserCustomAction' }, 
+                    Location:'Microsoft.SharePoint.StandardMenu',
+                    Group:'SiteActions', 
+                    Sequence:'101', 
+                    Title:'Do stuff',
+                    Description:'Opens the Shared Documents page', 
+                    Url:'~site/Shared%20Documents/Forms/AllItems.aspx' };
+
+                return request.get({
+                    url: url + '/_api/web/UserCustomActions',
+                    headers: headers,
+                   //body: data,
+                    //json: true
+                });
+         })
+         .then((response) => {
+             console.log("DONE");
+         })
+        .catch((error) => {
+            console.log("CATCH");
+            console.log(error);
+        }); 
     });
 });
