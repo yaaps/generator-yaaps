@@ -45,9 +45,10 @@ function setSiteUrl(url){
 
 function replaceTokens(file, settings){
     file.contents = new Buffer(String(file.contents)
-        .replace(/_BASEURL_/g, settings.basePath == '/'?'':settings.basePath));
+        .replace(/_BASEURL_/g, _.trimEnd(settings.basePath,'/'))
+        .replace(/_VENDOR_/g, settings.vendor)
+    );
 }
-
 
 gulp.task("check-site", function(){
     
