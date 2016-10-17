@@ -45,7 +45,7 @@ function setSiteUrl(url){
 
 function replaceTokens(file, settings){
     file.contents = new Buffer(String(file.contents)
-        .replace(/_BASEURL_/g, settings.basePath));
+        .replace(/_BASEURL_/g, settings.basePath == '/'?'':settings.basePath));
 }
 
 
