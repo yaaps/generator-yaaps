@@ -126,13 +126,16 @@ module.exports = generators.Base.extend({
     writing: function () {
 
         var vendor = this.settings.vendor;
+        var shared = `src/Style Library/${vendor}/Shared`;
         
         this._copyTpl('package.json');
         this._copyTpl('gulpfile.js');
         this._copyTpl('creds.js');
         this._copyTpl('settings.js');
         this._copyTpl('gitignore', '.gitignore');
-        this._copyTpl('yaaps_boot.js', `src/Style Library/${vendor}/Shared/yaaps_boot.js`);
+        this._copyTpl('yaaps_boot.js', `${shared}/yaaps_boot.js`);
+        this._copyTpl('jquery.js', `${shared}/jquery.js`);
+        this._copyTpl('knockout.js', `${shared}/knockout.js`);
         
         if(this.settings.createpart){
             this._createCEWP(this.settings);
