@@ -170,7 +170,7 @@ gulp.task("push", ["check-all"], function(){
 });
 
 gulp.task("deploy", function(done){
-    runSequence("clean", "build", "push", done);
+    runSequence("clean", "build", "push", "spaxion", done);
 });
 
 var onError = function(err){
@@ -191,9 +191,9 @@ gulp.task("watch", ["check-all"], function(){
 
     gulp.watch(["./src/Style Library/**/*.*"], function(event){
 
-        function replace(file){
-            return replaceTokens(file, settings);
-        }
+        // function replace(file){
+        //     return replaceTokens(file, settings);
+        // }
 
         function buildDest(filepath){
             
@@ -209,7 +209,7 @@ gulp.task("watch", ["check-all"], function(){
             .pipe(plumber({
                 errorHandler: onError
             }))
-            .pipe(tap(replace))
+            .pipe(tap((file) => replaceTokens(file, settings)))
             .pipe(gulp.dest(function(){
                 return buildDest(event.path);
             }));

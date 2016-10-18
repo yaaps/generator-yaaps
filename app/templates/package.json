@@ -4,7 +4,10 @@
   "description": "<%= description %>",
   "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "predeploy": "echo \"Deploying....\"",
+    "deploy": "gulp deploy --silent",
+    "postdeploy": "echo \"Deployed\""
   },
   "author": "<%= author %>",
   "license": "ISC",

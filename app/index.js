@@ -125,12 +125,15 @@ module.exports = generators.Base.extend({
 
     writing: function () {
 
+        var vendor = this.settings.vendor;
+        
         this._copyTpl('package.json');
         this._copyTpl('gulpfile.js');
         this._copyTpl('creds.js');
         this._copyTpl('settings.js');
         this._copyTpl('gitignore', '.gitignore');
-
+        this._copyTpl('yaaps_boot.js', `src/Style Library/${vendor}/Shared/yaaps_boot.js`);
+        
         if(this.settings.createpart){
             this._createCEWP(this.settings);
         }
@@ -148,7 +151,7 @@ module.exports = generators.Base.extend({
 
     _createCEWP: function(settings){
         this._copyTpl('index.html', `src/Style Library/${settings.vendor}/${settings.folder}/index.html`);
-        this._copyTpl('MSContentEditor.dwp', 'src/_catalogs/wp/' + settings.folder + '.dwp');
+        this._copyTpl('MSContentEditor.dwp', `src/_catalogs/wp/${settings.folder}.dwp`);
     },
 
     _copyTpl: function(tmpl, dest){
