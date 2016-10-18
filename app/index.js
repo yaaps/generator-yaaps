@@ -28,8 +28,7 @@ module.exports = generators.Base.extend({
             {
                 type: 'input',
                 name: 'projectdescription',
-                message: 'Description of project:',
-                default: 'Description of ' + this.appname
+                message: 'Description of project:'
             },
             {
                 type: 'input',
@@ -89,6 +88,11 @@ module.exports = generators.Base.extend({
 
                 function strip(s){
                     return _.replace(s, /[^a-zA-Z0-9]/g, '');
+                }
+
+                if(answers.createpart && !answers.partname){
+                    this.log(chalk.yellow("Webpart name not supplied so it will default to CEWP"));
+                    answers.partname = "CEWP";
                 }
 
                 var packageName = _.kebabCase(strip(_.startCase(answers.projectname)));
