@@ -216,14 +216,13 @@ gulp.task("watch", ["check-all"], function(){
     });
 });
 
-
 gulp.task("spaxion", ["check-all"], function(){
 
-      var url = styleSettings.siteUrl;
-        var creds = {
-            username: styleSettings.username,
-            password: styleSettings.password 
-        };
+    var url = styleSettings.siteUrl;
+    var creds = {
+        username: styleSettings.username,
+        password: styleSettings.password 
+    };
 
     return spauth.getAuth(url, creds)
     .then((options) => {
@@ -234,10 +233,10 @@ gulp.task("spaxion", ["check-all"], function(){
             },
             Description: "YAAPS User Custom Action",
             Location: "ScriptLink",
-            Name: "YAAPS.ACTION",
-            ScriptSrc: "~siteCollection/Style Library/yaaps_boot.js",
+            Name: `${settings.vendor}.ACTION`,
+            ScriptSrc: `~siteCollection/Style Library/${settings.vendor}/Shared/yaaps_boot.js`,
             Sequence: 1000,
-            Title: "YAAPS Action"
+            Title: "YAAPS Script Custom Action"
         }
 
         var headers = options.headers;
@@ -256,39 +255,36 @@ gulp.task("spaxion", ["check-all"], function(){
                 return request.get({
                     url: url + '/_api/web/UserCustomActions',
                     headers: headers,
-                   //body: data,
-                    //json: true
                 });
         })
         .then((response) => {
-            console.log("Received list of existing actions");
-            //console.log(response);
+            
+            var currentItems = JSON.parse(response).d.results.filter(
+                item => item.Name === data.Name
+            );
 
-            //     return request.get({
-            //         url: url + '/_api/web/UserCustomActions',
-            //         headers: headers,
-            //        //body: data,
-            //         //json: true
-            //     });
+            if(currentItems && currentItems.length){
+                console.log(`Found ${currentItems.length} existing items, deleting ${currentItems[0].Id}`);
 
-            return Promise.resolve(response);
+                var id = currentItems[0].Id;
+
+                return request.delete({
+                    url: url + `/_api/Web/UserCustomActions(guid'${id}')`,
+                    headers: headers,
+                });
+            }else{
+                console.log(`Found no existing custom actions matching name ${data.Name}`);
+                return Promise.resolve(response);
+            }
         })
         .then((response) => {
-                console.log("No action taken on existing actions");
+                console.log(`Adding new custom action ${data.Name}`);
 
-                var data = { __metadata: { type: 'SP.UserCustomAction' }, 
-                    Location:'Microsoft.SharePoint.StandardMenu',
-                    Group:'SiteActions', 
-                    Sequence:'101', 
-                    Title:'Do stuff',
-                    Description:'Opens the Shared Documents page', 
-                    Url:'~site/Shared%20Documents/Forms/AllItems.aspx' };
-
-                return request.get({
+                return request.post({
                     url: url + '/_api/web/UserCustomActions',
                     headers: headers,
-                   //body: data,
-                    //json: true
+                    body: data,
+                    json: true
                 });
          })
          .then((response) => {
