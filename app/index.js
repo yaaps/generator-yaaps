@@ -114,6 +114,8 @@ module.exports = generators.Base.extend({
                     baseurl: baseUrl
                 }
                 
+                this.config.set("vendor", this.settings.vendor);
+
             }.bind(this));
     },
 
@@ -141,7 +143,7 @@ module.exports = generators.Base.extend({
     },
 
     _createCEWP: function(settings){
-        this._copyTpl('index.html', 'src/Style Library/' + settings.folder + '/index.html');
+        this._copyTpl('index.html', `src/Style Library/${settings.vendor}/${settings.folder}/index.html`);
         this._copyTpl('MSContentEditor.dwp', 'src/_catalogs/wp/' + settings.folder + '.dwp');
     },
 

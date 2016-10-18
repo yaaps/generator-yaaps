@@ -5,5 +5,5 @@
 	<Title><%= title %></Title>
 	<Description><%= description %></Description>
 	<PartImageLarge>/_layouts/15/images/mscontl.gif</PartImageLarge>
-	<ContentLink xmlns="http://schemas.microsoft.com/WebPart/v2/ContentEditor"><%= baseurl %>/style library/<%= folder %>/index.html</ContentLink>
+	<ContentLink xmlns="http://schemas.microsoft.com/WebPart/v2/ContentEditor">_BASEURL_/style library/_VENDOR_/<%= folder %>/index.html</ContentLink>
 </WebPart>

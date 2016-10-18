@@ -20,17 +20,19 @@ module.exports = generators.Base.extend({
         return this.prompt([{
                 type: 'input',
                 name: 'partname',
-                message: 'Name of web part:',
-                default: this.appname
+                message: 'Name of web part:'
             },
             {
                 type: 'input',
                 name: 'partdescription',
-                message: 'Description of web part:',
-                default: this.appname
+                message: 'Description of web part:'
             }
             ])
             .then(function(answers){
+
+                if(!answers.partname){
+                    this.env.error("Name of web part is required");
+                }
 
                 var folder = _.startCase(answers.partname);
                 folder = _.replace(folder, /[^a-zA-Z0-9]/g, '');
@@ -44,6 +46,8 @@ module.exports = generators.Base.extend({
                     folder: folder,
                     baseurl: baseUrl
                 }
+
+                this.settings.vendor = this.config.get("vendor");
                 
             }.bind(this));
     },
@@ -57,8 +61,13 @@ module.exports = generators.Base.extend({
     },
 
     _createCEWP: function(settings){
-        this._copyTpl('index.html', 'src/Style Library/' + settings.folder + '/index.html');
-        this._copyTpl('MSContentEditor.dwp', 'src/_catalogs/wp/' + settings.folder + '.dwp');
+
+        var assets = "Style Library";
+        var folder = settings.folder;
+        var vendor = settings.vendor;
+
+        this._copyTpl('index.html', `src/${assets}/${vendor}/${folder}/index.html`);
+        this._copyTpl('MSContentEditor.dwp', `src/_catalogs/wp/${folder}.dwp`);
     },
 
     _copyTpl: function(tmpl, dest){

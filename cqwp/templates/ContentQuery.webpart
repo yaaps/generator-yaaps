@@ -10,9 +10,9 @@
         
         <Title><%= title %></Title>
       	<Description><%= description %></Description>
-        <property name="MainXslLink" type="string" ><%= baseurl %>/Style Library/<%= folder %>/ContentQueryMain.xsl</property>
-        <property name="ItemXslLink" type="string" ><%= baseurl %>/Style Library/<%= folder %>/ItemStyle.xsl</property>
-        <property name="HeaderXslLink" type="string" ><%= baseurl %>/Style Library/<%= folder %>/Header.xsl</property>
+        <property name="MainXslLink" type="string" >_BASEURL_/Style Library/_VENDOR_/<%= folder %>/ContentQueryMain.xsl</property>
+        <property name="ItemXslLink" type="string" >_BASEURL_/Style Library/_VENDOR_/<%= folder %>/ItemStyle.xsl</property>
+        <property name="HeaderXslLink" type="string" >_BASEURL_/Style Library/_VENDOR_/<%= folder %>/Header.xsl</property>
         
         <property name="ChromeType">TitleOnly</property>
         <property name="ChromeState">Normal</property>

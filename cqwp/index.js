@@ -20,17 +20,19 @@ module.exports = generators.Base.extend({
         return this.prompt([{
                 type: 'input',
                 name: 'partname',
-                message: 'Name of web part:',
-                default: this.appname
+                message: 'Name of web part:'
             },
             {
                 type: 'input',
                 name: 'partdescription',
                 message: 'Description of web part:',
-                default: this.appname
             }
             ])
             .then(function(answers){
+
+                if(!answers.partname){
+                    this.env.error("Name of web part is required");
+                }
 
                 var folder = _.startCase(answers.partname);
                 folder = _.replace(folder, /[^a-zA-Z0-9]/g, '');
@@ -45,27 +47,27 @@ module.exports = generators.Base.extend({
                     package: packageName,
                     baseurl: baseUrl
                 }
+
+                this.settings.vendor = this.config.get("vendor");
                 
             }.bind(this));
     },
 
     writing: function () {
 
-        this._copyTpl('ContentQueryMain.xsl', 'src/Style Library/' + this.settings.folder + '/ContentQueryMain.xsl');
-        this._copyTpl('Header.xsl', 'src/Style Library/' + this.settings.folder + '/Header.xsl');
-        this._copyTpl('ItemStyle.xsl', 'src/Style Library/' + this.settings.folder + '/ItemStyle.xsl');
-        this._copyTpl('ContentQuery.webpart', 'src/_catalogs/wp/' + this.settings.folder + '.webpart');
+        var assets = "Style Library";
+        var vendor = this.settings.vendor;
+        var folder = this.settings.folder;
 
-    },
-
-    install: function () {
-        
+        this._copyTpl('ContentQueryMain.xsl', `src/${assets}/${vendor}/${folder}/ContentQueryMain.xsl`);
+        this._copyTpl('Header.xsl', `src/${assets}/${vendor}/${folder}/Header.xsl`);
+        this._copyTpl('ItemStyle.xsl', `src/${assets}/${vendor}/${folder}/ItemStyle.xsl`);
+        this._copyTpl('ContentQuery.webpart', `src/_catalogs/wp/${folder}.webpart`);
     },
 
     _copyTpl: function(tmpl, dest){
 
         dest = dest || tmpl;
-        this.log(tmpl + ", " + dest);
 
         this.fs.copyTpl(
             this.templatePath(tmpl),
