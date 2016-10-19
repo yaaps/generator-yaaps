@@ -148,25 +148,40 @@ gulp.task("build", ["check-site"], function(){
         .pipe(gulp.dest("./dist/Style Library"));
 
     return merge(webparts, templates);
-
 });
 
 gulp.task("check-all", function(done){
-
-    return runSequence("check-site", "check-user", "check-password", done);
-    
+    return runSequence("check-site", "check-user", "check-password", done);    
 })
 
 gulp.task("push", ["check-all"], function(){
+
+    var partSettings = _.extend(catalogSettings, { filesMetaData: []});
+
+    function partTap(file, settings){
+        var fileName = pathUtil.basename(file.path);
+
+        var files = settings.filesMetaData;
+        if(files.filter(f => f.fileName == fileName).length == 0){
+            files.push({
+                fileName: fileName,
+                metadata: {
+                    "__metadata": { type: "SP.Data.OData__x005f_catalogs_x002f_wpItem"},
+                    Group: settings.vendor
+                }
+            })
+        }
+        return file;
+    }
 
     var styles = gulp.src("./dist/Style Library/**/*.*")
         .pipe(spsave(styleSettings));
 
     var webparts = gulp.src("./dist/_catalogs/wp/**/*.*")
-        .pipe(spsave(catalogSettings));
+        .pipe(tap((file) => partTap(file, partSettings)))
+        .pipe(spsave(partSettings));
 
     return merge(styles, webparts);
-    
 });
 
 gulp.task("deploy", function(done){
@@ -190,10 +205,6 @@ gulp.task("watch", ["check-all"], function(){
     });
 
     gulp.watch(["./src/Style Library/**/*.*"], function(event){
-
-        // function replace(file){
-        //     return replaceTokens(file, settings);
-        // }
 
         function buildDest(filepath){
             
