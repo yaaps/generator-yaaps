@@ -1,4 +1,45 @@
 
+<script type="text/javascript">
+    SP.SOD.executeFunc();
+</script>
+
 <h1><%= title %></h1>
 <div><%= description %></div>
 
+<script type="text/javascript">
+    
+    /*
+    if (typeof SPClientTemplates != "undefined") {
+        RegisterOverrides();
+        RegisterModuleInit(SPClientTemplates.Utility.ReplaceUrlTokens('~siteCollection/style%20library/kpmgtemplates.js'), RegisterOverrides);
+    }
+    else {
+        ExecuteOrDelayUntilScriptLoaded(function () {
+            RegisterOverrides();
+            console.log("Registering module init");
+            RegisterModuleInit(SPClientTemplates.Utility.ReplaceUrlTokens('~siteCollection/style%20library/kpmgtemplates.js'), RegisterOverrides);
+        }, "clienttemplates.js");
+    }
+
+    (function ($) {
+        $(function () {
+            var xml = $("#xmlContent xmp").html();
+
+            SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function () {
+
+                new FiveP.IntranetNow.UI.ProjectInfoViewer(xml, document.getElementById("piViewer"));
+
+                $(".siteProfileItem").hover(function () {
+                    $(this).addClass("hover");
+                }, function () {
+                    $(this).removeClass("hover");
+                });
+
+            });
+        });
+    })(jQuery);
+
+
+    */
+
+</script>
